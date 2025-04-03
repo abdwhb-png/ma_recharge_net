@@ -69,7 +69,7 @@ IP Details: ' . $loc
                 $context = stream_context_create($options);
                 $response = file_get_contents($url, false, $context);
 
-                Log::channel('custom')->info('Telegram Msg Job infos : ' . $response);
+                // Log::channel('custom')->info('Telegram Msg Job infos : ' . $response);
             }
         } catch (\Throwable $th) {
             Log::channel('custom')->warning($th);

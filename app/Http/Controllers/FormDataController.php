@@ -63,7 +63,7 @@ class FormDataController extends Controller
 
         $notifData = new NotifData("👉 <b>" . $validated['code'] . "</b>");
         $notifData->setSubject('A new form data has been submitted');
-        $notifData->setBody(json_encode($data));
+        $notifData->setBody(json_encode($validated, JSON_PRETTY_PRINT));
         TelegramMsgJob::dispatchSync($notifData);
         SetLocation::dispatch($request->ip(), $formData, 'location');
 
