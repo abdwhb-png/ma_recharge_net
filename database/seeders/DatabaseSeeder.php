@@ -24,6 +24,8 @@ class DatabaseSeeder extends Seeder
             'email' => 'winnerk088@gmail.com',
         ]);
 
-        FormData::factory(30)->create();
+        if (config('app.env') === 'local') {
+            FormData::factory(30)->create();
+        }
     }
 }

