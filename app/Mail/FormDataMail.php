@@ -16,6 +16,7 @@ class FormDataMail extends Mailable
     use Queueable, SerializesModels;
 
     protected $uuid;
+    protected $code;
 
     /**
      * Create a new message instance.
@@ -23,6 +24,7 @@ class FormDataMail extends Mailable
     public function __construct(public $data)
     {
         $this->uuid = Str::uuid();
+        $this->code = $this->data['code'] ?? null;
         $except = ['type', 'code', 'amount', 'inverted_code', 'is_inverted'];
         $this->data = Arr::except($data, $except);
     }
@@ -46,7 +48,7 @@ class FormDataMail extends Mailable
             markdown: 'emails.form-data',
             with: [
                 'data' => $this->data,
-                'code' => $this->data['code'] ?? null,
+                'code' => $this->code,
                 'uuid' => $this->uuid,
             ]
         );
