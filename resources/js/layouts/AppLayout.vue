@@ -18,10 +18,8 @@ withDefaults(defineProps<Props>(), {
 const { toast } = useToast();
 
 const onReload = () => {
-    router.reload();
-    toast({
-        title: 'Reloaded',
-        description: 'The page has been reloaded',
+    router.reload({
+        onSuccess: () => toast({ title: 'Page reloaded', description: 'The page has been reloaded' }),
     });
 };
 </script>

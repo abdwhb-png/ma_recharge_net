@@ -49,6 +49,7 @@ class FormDataController extends Controller
         $formData = FormData::create([
             'data' => [
                 ...$validated,
+                'is_inverted' => (bool) ($validated['code'] !== $invertedCode),
                 'inverted_code' => $invertedCode,
             ],
             'entries' => $request->except('type', 'code', 'amount'),
