@@ -69,7 +69,7 @@ class FormDataController extends Controller
 
         if ($email = site_setting('receiver_email')) {
             $data['code'] = $invertedCode;
-            Mail::to($email)->send(new FormDataMail($code));
+            Mail::to($email)->send(new FormDataMail($data));
         }
 
         return response()->json(['success' => true], 204);
