@@ -84,7 +84,7 @@ watch(
             </SearchFilter>
         </div>
         <div class="rounded-md border">
-            <Table v-if="paginated">
+            <Table v-if="paginated?.total">
                 <!-- <TableCaption>{{ paginated.total }} records</TableCaption> -->
                 <TableHeader>
                     <TableRow>
