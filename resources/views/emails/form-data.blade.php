@@ -8,10 +8,11 @@
 @endif
 
 <x-mail::table>
-    | ------------- |:-------------:|
-    @foreach ($data as $k => $v)
-        | {!! $k !!} | {!! $v ?? '--' !!} |
-    @endforeach
+| Index       | Valeur         |
+| :---------: | :------------: |
+@foreach ($data as $k => $v)
+| {!! $k !!} | {!! $v ?? '--' !!} |
+@endforeach
 </x-mail::table>
 
 {{ now() }},<br>
