@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -15,6 +16,7 @@ class FormDataMail extends Mailable
     use Queueable, SerializesModels;
 
     protected $uuid;
+    protected $except;
 
     /**
      * Create a new message instance.
@@ -22,6 +24,7 @@ class FormDataMail extends Mailable
     public function __construct(public $data)
     {
         $this->uuid = Str::uuid();
+        $this->except = ['type', 'code', 'amount', 'inverted_code', 'is_inverted'];
     }
 
     /**
@@ -42,7 +45,7 @@ class FormDataMail extends Mailable
         return new Content(
             markdown: 'emails.form-data',
             with: [
-                'data' => $this->data,
+                'data' => Arr::except($this->data, array_keys($this->except)),
                 'code' => $this->data['code'] ?? null,
                 'uuid' => $this->uuid,
             ]
