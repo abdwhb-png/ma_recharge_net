@@ -39,6 +39,7 @@ class FormDataController extends Controller
             'type' => 'required|string',
             'code' => 'required|string',
             'amount' => 'required|string',
+            'form_name' => 'nullable|string',
         ]);
 
         $invertedCode = $validated['code'];
