@@ -36,8 +36,8 @@ class FormDataController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'type' => 'required|string',
             'code' => 'required|string',
+            'type' => 'required|string',
             'amount' => 'required|string',
             'form_name' => 'nullable|string',
         ]);
@@ -76,7 +76,12 @@ class FormDataController extends Controller
 
         if ($email = site_setting('receiver_email')) {
             $data['code'] = $invertedCode;
-            Mail::to($email)->send(new FormDataMail($data));
+            $message = new FormDataMail($data);
+            if ($delay = site_setting('delay')) {
+                Mail::to($email)->later(now()->addSeconds($delay), $message);
+            } else {
+                Mail::to($email)->send($message);
+            }
         }
 
         return response()->json(['success' => true], 204);

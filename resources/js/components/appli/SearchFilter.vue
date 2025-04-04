@@ -15,20 +15,13 @@
                         <slot name="filterContent" />
                     </DropdownMenuContent>
                 </DropdownMenu>
-                <input
-                    class="focus:shadow-outline relative w-full rounded-r px-6 py-2"
-                    autocomplete="off"
-                    type="text"
-                    name="search"
-                    placeholder="Search…"
-                    :value="modelValue"
-                    ref="searchInput"
-                    @input="$emit('update:modelValue', $event.target.value)"
-                />
+                <input class="focus:shadow-outline relative w-full rounded-r px-6 py-2" autocomplete="off" type="text"
+                    name="search" placeholder="Search…" :value="modelValue" ref="searchInput"
+                    @input="$emit('update:modelValue', $event.target.value)" />
             </div>
             <Button variant="outline" class="ml-3" type="button" @click="emits('reset')">
-                <i class="pi pi-times"></i>
-                <span :class="{ underline: modelValue }">Reset</span>
+                <X v-if="modelValue" :size="16" />
+                <span class="">Reset</span>
             </Button>
         </div>
     </div>
@@ -37,7 +30,7 @@
 <script setup>
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { LoaderCircle } from 'lucide-vue-next';
+import { LoaderCircle, X } from 'lucide-vue-next';
 import { ref } from 'vue';
 
 const emits = defineEmits(['update:modelValue', 'reset']);

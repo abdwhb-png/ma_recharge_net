@@ -150,7 +150,7 @@ watch(
                 <Info class="h-4 w-4" />
                 <AlertTitle>No form data records found!</AlertTitle>
                 <AlertDescription>
-                    <pre>{{ paginated }}</pre>
+                    {{ paginated.total }} records
                 </AlertDescription>
             </Alert>
         </div>

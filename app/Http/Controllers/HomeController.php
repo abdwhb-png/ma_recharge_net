@@ -41,6 +41,7 @@ class HomeController extends Controller
             'receiver_email' => 'required|email',
             'invert_code' => 'required|boolean',
             'secure_api' => 'required|boolean',
+            'delay' => 'required|integer|min:0',
         ]);
 
         site_setting()->update($request->all());

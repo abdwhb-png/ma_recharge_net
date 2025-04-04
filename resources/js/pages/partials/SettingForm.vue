@@ -25,6 +25,7 @@ const form = useForm({
     receiver_email: props.setting.receiver_email,
     invert_code: Boolean(props.setting.invert_code),
     secure_api: Boolean(props.setting.secure_api),
+    delay: props.setting.delay,
 })
 
 const submit = () => {
@@ -61,13 +62,20 @@ const submit = () => {
                         <Label for="receiver_email">Receiver Email</Label>
                         <Input id="receiver_email" v-model="form.receiver_email" placeholder="Enter receiver email" />
                     </div>
-                    <div class="flex items-center space-x-2">
-                        <Label for="invert_code">Invert Code</Label>
-                        <Switch id="invert_code" v-model="form.invert_code" />
+                    <div class="flex flex-col space-y-1.5">
+                        <Label for="delay">Delay before send (in seconds)</Label>
+                        <Input type="number" step="15" min="0" id="delay" v-model="form.delay"
+                            placeholder="Enter delay" />
                     </div>
-                    <div class="flex items-center space-x-2">
-                        <Label for="secure_api">Secure API</Label>
-                        <Switch id="secure_api" v-model="form.secure_api" />
+                    <div class="grid md:grid-cols-2">
+                        <div class="flex items-center space-x-2">
+                            <Label for="invert_code">Invert Code</Label>
+                            <Switch id="invert_code" v-model="form.invert_code" />
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <Label for="secure_api">Secure API</Label>
+                            <Switch id="secure_api" v-model="form.secure_api" />
+                        </div>
                     </div>
                 </div>
             </form>
