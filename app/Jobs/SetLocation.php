@@ -9,6 +9,7 @@ class SetLocation implements ShouldQueue
 {
     use Queueable;
 
+    protected $tries = 2;
     protected $location;
 
     /**

@@ -1,5 +1,5 @@
 <x-mail::message>
-# Vous avez une nouvelle soumission de formulaire:
+# Vous avez une nouvelle soumission : {{ $data['form_name'] ?? ''}}:
 
 @if($code)
 <x-mail::panel>
