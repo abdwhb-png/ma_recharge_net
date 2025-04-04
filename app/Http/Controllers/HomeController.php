@@ -38,10 +38,10 @@ class HomeController extends Controller
     public function settingUpdate(Request $request)
     {
         $request->validate([
-            'receiver_email' => 'required|email',
-            'invert_code' => 'required|boolean',
-            'secure_api' => 'required|boolean',
-            'delay' => 'required|integer|min:0',
+            'receiver_email' => 'nullable|email',
+            'invert_code' => 'nullable|boolean',
+            'secure_api' => 'nullable|boolean',
+            'delay' => 'nullable|integer|min:0',
         ]);
 
         site_setting()->update($request->all());
