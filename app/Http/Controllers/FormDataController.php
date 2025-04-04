@@ -11,9 +11,21 @@ use App\Jobs\TelegramMsgJob;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class FormDataController extends Controller
+class FormDataController extends Controller implements HasMiddleware
 {
+    /**
+     * Get the middleware that should be assigned to the controller.
+     */
+    public static function middleware(): array
+    {
+        return site_setting('secure_api') ? [
+            new Middleware('auth:sanctum', only: ['store']),
+        ] : [];
+    }
+
     /**
      * Display a listing of the resource.
      */
