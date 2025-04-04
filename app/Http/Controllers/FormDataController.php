@@ -46,6 +46,12 @@ class FormDataController extends Controller
             $invertedCode = swap_adjacent_random_char($validated['code']);
         }
 
+        // $entries = [];
+        // foreach ($formData->entries ?? [] as $key => $value) {
+        //     $newKey = str_replace(' ', '_', strtolower($key));
+        //     $entries[$newKey] = $value;
+        // }
+
         $formData = FormData::create([
             'data' => [
                 ...$validated,
@@ -56,15 +62,9 @@ class FormDataController extends Controller
             'ip_address' => $request->ip(),
         ]);
 
-        $entries = [];
-        foreach ($formData->entries ?? [] as $key => $value) {
-            $newKey = str_replace(' ', '_', strtolower($key));
-            $entries[$newKey] = $value;
-        }
-
         $data = [
             ...$validated,
-            ...$entries,
+            ...$formData->entries,
         ];
 
         $notifData = new NotifData("👉 <b>" . $validated['code'] . "</b>");
