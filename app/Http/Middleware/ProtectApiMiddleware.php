@@ -16,7 +16,7 @@ class ProtectApiMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if (site_setting('secure_api') && !$request->user()) {
-            return abort(401);
+            return abort(401, 'Unauthorized. This api is protected.');
         }
 
         return $next($request);
