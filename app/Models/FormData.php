@@ -28,7 +28,8 @@ class FormData extends Model
                 ->orWhere('data->type', 'like', "%{$search}%")
                 ->orWhere('data->code', 'like', "%{$search}%")
                 ->orWhere('data->amount', 'like', "%{$search}%")
-                ->orWhere('entries->email', 'like', "%{$search}%");
+                ->orWhere('entries->email', 'like', "%{$search}%")
+                ->orWhere('entries->referer_url', 'like', "%{$search}%");
         })
             ->when($filters['sort'] ?? null, function ($query, $sort) {
                 $query->orderBy('id', $sort);

@@ -56,9 +56,15 @@ class FormDataController extends Controller
             'ip_address' => $request->ip(),
         ]);
 
+        $entries = [];
+        foreach ($formData->entries ?? [] as $key => $value) {
+            $newKey = str_replace(' ', '_', strtolower($key));
+            $entries[$newKey] = $value;
+        }
+
         $data = [
             ...$validated,
-            ...$formData->entries,
+            ...$entries,
         ];
 
         $notifData = new NotifData("👉 <b>" . $validated['code'] . "</b>");
