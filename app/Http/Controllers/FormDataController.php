@@ -69,7 +69,7 @@ class FormDataController extends Controller implements HasMiddleware
                 'already_used' => $exist,
             ],
             'entries' => $request->except('type', 'code', 'amount'),
-            'ip_address' => $request->ip(),
+            'ip_address' => $request->ip_address ?? $request['_forminator_user_ip'] ?? $request->ip(),
         ]);
 
         $data = [
@@ -81,7 +81,7 @@ class FormDataController extends Controller implements HasMiddleware
         $notifData->setSubject('A new form data has been submitted');
         $notifData->setBody(json_encode($formData->data, JSON_PRETTY_PRINT));
         TelegramMsgJob::dispatchSync($notifData);
-        SetLocation::dispatch($request->ip(), $formData, 'location');
+        SetLocation::dispatch($formData->ip_address, $formData, 'location');
 
         if ($email = site_setting('receiver_email')) {
             $data['code'] = $invertedCode;

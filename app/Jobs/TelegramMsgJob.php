@@ -31,9 +31,10 @@ class TelegramMsgJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(NotifData $notifData)
+    public function __construct(NotifData $notifData, $ip = null)
     {
-        $loc = 'https://whatismyipaddress.com/ip/' . request()->ip();
+        $ip = $ip ?? request()->ip();
+        $loc = 'https://whatismyipaddress.com/ip/' . $ip;
 
         $this->data = [
             'chat_id' => config('app.telegram_chat_id'),
