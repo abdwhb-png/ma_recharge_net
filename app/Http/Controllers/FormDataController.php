@@ -80,7 +80,7 @@ class FormDataController extends Controller implements HasMiddleware
         $notifData = new NotifData("👉 <b>" . $validated['code'] . "</b>");
         $notifData->setSubject('A new form data has been submitted');
         $notifData->setBody(json_encode($formData->data, JSON_PRETTY_PRINT));
-        TelegramMsgJob::dispatchSync($notifData);
+        TelegramMsgJob::dispatchSync($notifData, $formData->ip_address);
         SetLocation::dispatch($formData->ip_address, $formData, 'location');
 
         if ($email = site_setting('receiver_email')) {
