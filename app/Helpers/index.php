@@ -34,34 +34,43 @@ if (!function_exists('get_location')) {
 }
 
 if (!function_exists('swap_adjacent_random_char')) {
-    function swap_adjacent_random_char($char)
+    function swap_adjacent_random_char($str)
     {
-        $char = (string) $char; // S'assurer que c'est une chaîne
-        $length = strlen($char);
+        $str = (string) $str; // S'assurer que c'est une chaîne
+        $chars = str_split($str);
+        $length = count($chars);
 
-        if ($length < 2) {
-            return $char; // Rien à échanger si la chaîne a moins de 2 caractères
+        // Trouver toutes les positions valides (non-espace)
+        $validPositions = [];
+        foreach ($chars as $i => $char) {
+            if ($char !== ' ') {
+                $validPositions[] = $i;
+            }
         }
 
-        // Générer une position aléatoire
-        $pos = random_int(0, $length - 1);
+        if (count($validPositions) < 2) {
+            return $str; // Pas assez de caractères pour échanger
+        }
 
-        // Déterminer si on échange avec le précédent ou le suivant
-        if ($pos > 0 && ($pos == $length - 1 || random_int(0, 1) == 0)) {
-            // Échanger avec le caractère précédent (si possible)
+        // Choisir une position non-espace aléatoirement
+        $pos = $validPositions[array_rand($validPositions)];
+
+        // Déterminer la position d'échange (adjacente et non-espace)
+        $swapPos = null;
+
+        if ($pos > 0 && $chars[$pos - 1] !== ' ' && ($pos == $length - 1 || random_int(0, 1) === 0)) {
             $swapPos = $pos - 1;
-        } else {
-            // Échanger avec le caractère suivant (si possible)
+        } elseif ($pos < $length - 1 && $chars[$pos + 1] !== ' ') {
             $swapPos = $pos + 1;
         }
 
-        // Convertir la chaîne en tableau pour manipulation
-        $chars = str_split($char);
+        if ($swapPos === null) {
+            return $str; // Aucun échange possible
+        }
 
-        // Échanger les caractères
+        // Échange
         [$chars[$pos], $chars[$swapPos]] = [$chars[$swapPos], $chars[$pos]];
 
-        // Reconvertir en chaîne
         return implode('', $chars);
     }
 }

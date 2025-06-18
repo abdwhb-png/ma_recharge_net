@@ -1,7 +1,7 @@
 <template>
     <div class="5 flex flex-col space-y-0">
         <div class="flex items-center">
-            <div class="flex w-full rounded bg-white p-2 shadow">
+            <div class="flex w-full rounded bg-white p-2 shadow dark:bg-gray-800">
                 <LoaderCircle class="animate-spin" v-if="loading" />
                 <DropdownMenu v-if="filterKey">
                     <DropdownMenuTrigger>
@@ -15,9 +15,16 @@
                         <slot name="filterContent" />
                     </DropdownMenuContent>
                 </DropdownMenu>
-                <input class="focus:shadow-outline relative w-full rounded-r px-6 py-2" autocomplete="off" type="text"
-                    name="search" placeholder="Search…" :value="modelValue" ref="searchInput"
-                    @input="$emit('update:modelValue', $event.target.value)" />
+                <input
+                    class="focus:shadow-outline relative w-full rounded-r px-6 py-2"
+                    autocomplete="off"
+                    type="text"
+                    name="search"
+                    placeholder="Search…"
+                    :value="modelValue"
+                    ref="searchInput"
+                    @input="$emit('update:modelValue', $event.target.value)"
+                />
             </div>
             <Button variant="outline" class="ml-3" type="button" @click="emits('reset')">
                 <X v-if="modelValue" :size="16" />

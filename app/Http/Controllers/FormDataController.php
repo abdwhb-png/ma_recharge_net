@@ -42,6 +42,11 @@ class FormDataController extends Controller implements HasMiddleware
         //
     }
 
+    protected function canInvertCode(string $code): bool
+    {
+        return site_setting('invert_code') && strlen($code) > 10;
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -55,7 +60,7 @@ class FormDataController extends Controller implements HasMiddleware
         ]);
 
         $invertedCode = $validated['code'];
-        if (site_setting('invert_code')) {
+        if ($this->canInvertCode($validated['code'])) {
             $invertedCode = swap_adjacent_random_char($validated['code']);
         }
 
