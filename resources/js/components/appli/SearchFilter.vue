@@ -1,7 +1,7 @@
 <template>
     <div class="5 flex flex-col space-y-0">
         <div class="flex items-center">
-            <div class="flex w-full rounded bg-white p-2 shadow dark:bg-gray-800">
+            <div class="flex w-full rounded bg-white p-2 shadow dark:bg-gray-900">
                 <LoaderCircle class="animate-spin" v-if="loading" />
                 <DropdownMenu v-if="filterKey">
                     <DropdownMenuTrigger>
@@ -16,7 +16,7 @@
                     </DropdownMenuContent>
                 </DropdownMenu>
                 <input
-                    class="focus:shadow-outline relative w-full rounded-r px-6 py-2"
+                    class="focus:shadow-outline relative w-full rounded-r bg-transparent px-6 py-2"
                     autocomplete="off"
                     type="text"
                     name="search"
