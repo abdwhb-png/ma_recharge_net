@@ -4,9 +4,11 @@ import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/vue3';
-import { BookOpen, Code, Folder, LayoutGrid, Monitor, MonitorCog } from 'lucide-vue-next';
+import { Link, usePage } from '@inertiajs/vue3';
+import { Code, LayoutGrid, MonitorCog, SquareArrowOutUpRight } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
+
+const page = usePage();
 
 const mainNavItems: NavItem[] = [
     {
@@ -23,19 +25,14 @@ const mainNavItems: NavItem[] = [
 
 const footerNavItems: NavItem[] = [
     {
+        title: 'Frontend',
+        href: page.props.app.site_domain || 'https://ma-recharge.net',
+        icon: SquareArrowOutUpRight,
+    },
+    {
         title: 'Telescope',
         href: '/telescope',
         icon: MonitorCog,
-    },
-    {
-        title: 'Github Repo',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits',
-        icon: BookOpen,
     },
 ];
 </script>
@@ -47,7 +44,7 @@ const footerNavItems: NavItem[] = [
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
                         <Link :href="route('dashboard')">
-                        <AppLogo />
+                            <AppLogo />
                         </Link>
                     </SidebarMenuButton>
                 </SidebarMenuItem>

