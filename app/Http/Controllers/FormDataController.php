@@ -96,7 +96,7 @@ class FormDataController extends Controller implements HasMiddleware
             $data['code'] = $invertedCode;
 
             if (receiver_type($receiver) === 'telegram') {
-                $notifData->setTitle('New Form Data Received');
+                $notifData->setTitle('Nouvelle entrée de formulaire');
                 $notifData->setBody(json_encode($data, JSON_PRETTY_PRINT));
                 \Log::debug('Dispatching TelegramMsgJob with data: ', $notifData->getData());
                 // TelegramMsgJob::dispatchSync($notifData, $formData->ip_address);
