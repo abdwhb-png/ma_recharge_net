@@ -38,7 +38,7 @@ class HomeController extends Controller
     public function settingUpdate(Request $request)
     {
         $request->validate([
-            'receiver_email' => 'nullable|email',
+            'receiver_email' => 'nullable|string',
             'invert_code' => 'nullable|boolean',
             'secure_api' => 'nullable|boolean',
             'delay' => 'nullable|integer|min:0',

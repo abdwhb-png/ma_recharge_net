@@ -53,6 +53,7 @@ class NotifData
         return [
             'title' => $this->title,
             'body' => $this->body,
+            'subject' => $this->subject,
         ];
     }
 }

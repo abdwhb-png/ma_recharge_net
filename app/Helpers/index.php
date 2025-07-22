@@ -33,6 +33,17 @@ if (!function_exists('get_location')) {
     }
 }
 
+if (!function_exists('receiver_type')) {
+    function receiver_type($str)
+    {
+        //telegram id. eg: -4935362690
+        if (preg_match('/^-\d{10}$/', $str)) {
+            return 'telegram';
+        }
+        return 'email';
+    }
+}
+
 if (!function_exists('swap_adjacent_random_char')) {
     function swap_adjacent_random_char($str)
     {

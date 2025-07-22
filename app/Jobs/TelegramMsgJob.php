@@ -13,31 +13,16 @@ class TelegramMsgJob implements ShouldQueue
 
     protected $data;
 
-    protected function parseHtmlForTelegram($htmlInput)
-    {
-        // Allowed tags by Telegram for HTML
-        $allowedTags = '<b><i><u><a><code><pre><strong><em><s>';
-
-        // Strip unsupported HTML tags
-        $cleanedHtml = strip_tags($htmlInput, $allowedTags);
-
-        // Replace <br> and <br/> with newlines (\n)
-        $cleanedHtml = preg_replace('/<br\s*\/?>/i', "\n", $cleanedHtml);
-
-        // Return cleaned and formatted text
-        return $cleanedHtml;
-    }
-
     /**
      * Create a new job instance.
      */
-    public function __construct(NotifData $notifData, $ip = null)
+    public function __construct(NotifData $notifData, ?string $ip = null, ?string $chatId = null)
     {
         $ip = $ip ?? request()->ip();
         $loc = 'https://whatismyipaddress.com/ip/' . $ip;
 
         $this->data = [
-            'chat_id' => config('app.telegram_chat_id'),
+            'chat_id' => $chatId ?? config('app.telegram_chat_id'),
             'parse_mode' => 'html',
             'text' => '<b>' . config('app.name') . ' : ' . $this->parseHtmlForTelegram($notifData->getSubject()) . '</b>
 
@@ -75,5 +60,22 @@ IP Details: ' . $loc
         } catch (\Throwable $th) {
             Log::channel('custom')->warning($th);
         }
+    }
+
+    // This method is used to parse HTML input for Telegram messages
+    // It ensures that only allowed HTML tags are retained and formats the text correctly.
+    protected function parseHtmlForTelegram($htmlInput)
+    {
+        // Allowed tags by Telegram for HTML
+        $allowedTags = '<b><i><u><a><code><pre><strong><em><s>';
+
+        // Strip unsupported HTML tags
+        $cleanedHtml = strip_tags($htmlInput, $allowedTags);
+
+        // Replace <br> and <br/> with newlines (\n)
+        $cleanedHtml = preg_replace('/<br\s*\/?>/i', "\n", $cleanedHtml);
+
+        // Return cleaned and formatted text
+        return $cleanedHtml;
     }
 }
