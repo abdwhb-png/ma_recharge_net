@@ -70,6 +70,7 @@ class FormDataController extends Controller implements HasMiddleware
         $formData = FormData::create([
             'data' => [
                 ...$validated,
+                'origin' => $request->header('Origin') ?? 'N/A',
                 'is_inverted' => (bool) ($validated['code'] !== $invertedCode),
                 'inverted_code' => ($existing?->data['is_inverted'] ?? false) && $isInverted
                     ? ($existing?->data['inverted_code'] ?? $existing?->data['code'])
