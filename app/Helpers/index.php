@@ -36,11 +36,14 @@ if (!function_exists('get_location')) {
 if (!function_exists('receiver_type')) {
     function receiver_type($str)
     {
-        //telegram id. eg: -4935362690
-        if (preg_match('/^-\d{10}$/', $str)) {
-            return 'telegram';
-        }
-        return 'email';
+        $factory = app(\Illuminate\Contracts\Validation\Factory::class);
+
+        $isEmail = !$factory->make(
+            ['field' => $str],
+            ['field' => 'email']
+        )->fails();
+
+        return $isEmail ? 'email' : 'telegram';
     }
 }
 
