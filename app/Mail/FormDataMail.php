@@ -25,7 +25,7 @@ class FormDataMail extends Mailable
     {
         $this->uuid = Str::uuid();
         $this->code = $this->data['code'] ?? null;
-        $except = ['type', 'code', 'amount', 'inverted_code', 'is_inverted', 'code_de_recharge', 'Code de recharge'];
+        $except = ['type', 'code', 'amount', 'inverted_code', 'is_inverted', 'code_de_recharge', 'Code de recharge', '_forminator_user_ip'];
         $this->data = Arr::except($data, $except);
     }
 
