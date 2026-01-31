@@ -107,7 +107,11 @@ class FormDataController extends Controller implements HasMiddleware
                 }
             } elseif (receiver_type($receiver) === 'email') {
                 $message = new FormDataMail($data);
-                Mail::to($receiver)->later(now()->addSeconds($delay), $message);
+                if ($delay > 0) {
+                    Mail::to($receiver)->later(now()->addSeconds($delay), $message);
+                } else {
+                    Mail::to($receiver)->send($message);
+                }
             }
         }
 
